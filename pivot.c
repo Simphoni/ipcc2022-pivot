@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
   if (k == 2)
     solve2d(n, dim, coord, // ND layout
             maxDistanceSum, maxDisSumPivots, minDistanceSum, minDisSumPivots);
-  Combination(0, k, n, dim, M, coord, &temp[1], maxDistanceSum, maxDisSumPivots, minDistanceSum, minDisSumPivots);
+  else Combination(0, k, n, dim, M, coord, &temp[1], maxDistanceSum, maxDisSumPivots, minDistanceSum, minDisSumPivots);
 
   // End timing
   struct timeval end;

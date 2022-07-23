@@ -2,17 +2,18 @@
 #include <string.h>
 #include <stdlib.h>
 #include <omp.h>
+#include <math.h>
 #include "opt2d.h"
 #define uint unsigned long long
 
 int cmp(const void *a, const void *b) {
-  return (*(double*)a) < (*(double*)b);
+  return (*(double*)a) - (*(double*)b) < 0 ? -1 : 1;
 }
 
 #define calc(x,y) pow((x) - (y), 2)
 
 // k = 2
-void solve2d(const int n, const int dim, double *coord, // ND layout
+void solve2d(const int n, const int dim, double *const coord, // ND layout
              double *maxVal, int *maxComb, double *minVal, int *minComb) {
   int totCombs = n * (n - 1) / 2;
   int average = totCombs / THREADS_2D;
@@ -24,7 +25,6 @@ void solve2d(const int n, const int dim, double *coord, // ND layout
       if (sum >= average * 0.99) {
         assign[tmp] = i;
         tmp ++;
-        /* fprintf(stderr, "%.3lf\n", 1. * sum / average); */
         sum = 0;
       }
       if (tmp == THREADS_2D) break;
@@ -41,8 +41,10 @@ void solve2d(const int n, const int dim, double *coord, // ND layout
   double *aAll = (double*)malloc(sizeof(double) * n * THREADS_2D);
   double *bAll = (double*)malloc(sizeof(double) * n * THREADS_2D);
 
+  memset(maxValAll, 0, sizeof(double) * BUFF * THREADS_2D);
+  memset(minValAll, 0x7f, sizeof(double) * BUFF * THREADS_2D);
+
 #pragma omp parallel num_threads(THREADS_2D)
-#pragma omp proc_bind(close)
   {
     const int id = omp_get_thread_num();
     int lbound = assign[id];
@@ -57,67 +59,68 @@ void solve2d(const int n, const int dim, double *coord, // ND layout
     double *b = bAll + n * id;
     
     for (int u = lbound; u < rbound; u ++) {
-      printf("[%d]: %d\n", id, u);
+      // calc pivot1
       for (int i = 0; i < n; i ++) {
         double sum = 0;
         for (int j = 0; j < dim; j ++)
-          sum += calc(coord[u * 2 + j], coord[i * 2 + j]);
+          sum += calc(coord[u * dim + j], coord[i * dim + j]);
         c[i] = sqrt(sum);
-      
-        for (int v = u; v < n; v ++) {
-          
-          for (int i = 0; i < n; i ++) {
-            double sum = 0;
-            for (int j = 0; j < dim; j ++)
-              sum += calc(coord[v * 2 + j], coord[i * 2 + j]);
-            sum = sqrt(sum);
-            a[i] = fabs(sum - c[i]) * .5;
-            b[i] = fabs(sum + c[i]) * .5;
-          }
-          qsort(a, n, sizeof(double), cmp);
-          qsort(b, n, sizeof(double), cmp);
-          double ans = 0, asum = 0, bsum = 0;
-          for (int i = 0; i < n; i ++) {
-            ans += a[i] * i - asum;
-            ans += b[i] * i - bsum;
-            asum += a[i]; bsum += b[i];
-          }
-          if (ans > maxVal[0]) {
-            int j = 1;
-            for (int j = 1; j < BUFF; j ++) {
-              if (ans < maxVal[j]) break;
-              else {
-                maxVal[j - 1] = maxVal[j];
-                maxComb[2 * (j - 1)] = maxComb[2 * j];
-                maxComb[2 * (j - 1) + 1] = maxComb[2 * j + 1];
-              }
+      }
+
+      for (int v = u + 1; v < n; v ++) {
+        // calc pivot2
+        for (int i = 0; i < n; i ++) {
+          double sum = 0;
+          for (int j = 0; j < dim; j ++)
+            sum += calc(coord[v * dim + j], coord[i * dim + j]);
+          sum = sqrt(sum);
+          a[i] = sum - c[i];
+          b[i] = sum + c[i];
+        }
+        qsort(a, n, sizeof(double), cmp);
+        qsort(b, n, sizeof(double), cmp);
+        long double ans = 0, asum = 0, bsum = 0;
+        for (int i = 0; i < n; i ++) {
+          ans += a[i] * i - asum;
+          ans += b[i] * i - bsum;
+          asum += a[i]; bsum += b[i];
+        }
+        if (ans > maxVal[0]) {
+          int j = 1;
+          for (j = 1; j < BUFF; j ++) {
+            if (ans < maxVal[j]) break;
+            else {
+              maxVal[j - 1] = maxVal[j];
+              maxComb[2 * (j - 1)] = maxComb[2 * j];
+              maxComb[2 * (j - 1) + 1] = maxComb[2 * j + 1];
             }
-            j --;
-            maxVal[j] = ans;
-            maxComb[2 * j] = u;
-            maxComb[2 * j + 1] = v;
           }
-          if (ans < minVal[0]) {
-            int j = 1;
-            for (int j = 1; j < BUFF; j ++) {
-              if (ans < minVal[j]) break;
-              else {
-                minVal[j - 1] = minVal[j];
-                minComb[2 * (j - 1)] = minComb[2 * j];
-                minComb[2 * (j - 1) + 1] = minComb[2 * j + 1];
-              }
+          j --;
+          maxVal[j] = ans;
+          maxComb[2 * j] = u;
+          maxComb[2 * j + 1] = v;
+        }
+        if (ans < minVal[0]) {
+          int j = 1;
+          for (j = 1; j < BUFF; j ++) {
+            if (ans > minVal[j]) break;
+            else {
+              minVal[j - 1] = minVal[j];
+              minComb[2 * (j - 1)] = minComb[2 * j];
+              minComb[2 * (j - 1) + 1] = minComb[2 * j + 1];
             }
-            j --;
-            minVal[j] = ans;
-            minComb[2 * j] = u;
-            minComb[2 * j + 1] = v;
           }
+          j --;
+          minVal[j] = ans;
+          minComb[2 * j] = u;
+          minComb[2 * j + 1] = v;
         }
       }
     }
   }
+  // threads forced sync
   static int ptr[THREADS_2D + 1];
-  
+
   for (int i = 0; i < THREADS_2D; i ++) ptr[i] = i * BUFF + BUFF - 1;
   for (int i = 0; i < BUFF; i ++) {
     int id = 0;
