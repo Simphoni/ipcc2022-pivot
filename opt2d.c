@@ -37,12 +37,6 @@ void solve2d(const int n, const int dim, double *const coord, // ND layout
   int    *maxCombAll = (int*)malloc(sizeof(int) * BUFF * THREADS_2D * 2);
   double *minValAll = (double*)malloc(sizeof(double) * BUFF * THREADS_2D);
   int    *minCombAll = (int*)malloc(sizeof(int) * BUFF * THREADS_2D * 2);
-  double *cAll = (double*)malloc(sizeof(double) * n * THREADS_2D);
-  double *aAll = (double*)malloc(sizeof(double) * n * THREADS_2D);
-  double *bAll = (double*)malloc(sizeof(double) * n * THREADS_2D);
-
-  memset(maxValAll, 0, sizeof(double) * BUFF * THREADS_2D);
-  memset(minValAll, 0x7f, sizeof(double) * BUFF * THREADS_2D);
 
 #pragma omp parallel num_threads(THREADS_2D)
   {
@@ -50,14 +44,16 @@ void solve2d(const int n, const int dim, double *const coord, // ND layout
     int lbound = assign[id];
     int rbound = assign[id + 1];
 
-    double *maxVal = maxValAll + BUFF * id;
-    int    *maxComb = maxCombAll + BUFF * id * 2;
-    double *minVal = minValAll + BUFF * id;
-    int    *minComb = minCombAll + BUFF * id * 2;
-    double *c = cAll + n * id;
-    double *a = aAll + n * id;
-    double *b = bAll + n * id;
-    
+    double *maxVal = (double*)malloc(sizeof(double) * BUFF);
+    int    *maxComb = (int*)malloc(sizeof(int) * BUFF * 2);
+    double *minVal = (double*)malloc(sizeof(double) * BUFF);
+    int    *minComb = (int*)malloc(sizeof(int) * BUFF * 2);
+    double *c = (double*)malloc(sizeof(double) * n);
+    double *a = (double*)malloc(sizeof(double) * n);
+    double *b = (double*)malloc(sizeof(double) * n);
+    memset(maxVal, 0, sizeof(double) * BUFF);
+    memset(minVal, 0x7f, sizeof(double) * BUFF);
+
     for (int u = lbound; u < rbound; u ++) {
       // calc pivot1
       for (int i = 0; i < n; i ++) {
@@ -117,6 +113,17 @@ void solve2d(const int n, const int dim, double *const coord, // ND layout
         }
       }
     }
+    memcpy(maxValAll + BUFF * id, maxVal, sizeof(double) * BUFF);
+    memcpy(maxCombAll + BUFF * id * 2, maxComb, sizeof(int) * BUFF * 2);
+    memcpy(minValAll + BUFF * id, minVal, sizeof(double) * BUFF);
+    memcpy(minCombAll + BUFF * id * 2, minComb, sizeof(int) * BUFF * 2);
+    free(maxVal);
+    free(maxComb);
+    free(minVal);
+    free(minComb);
+    free(a);
+    free(b);
+    free(c);
   }
   // threads forced sync
   static int ptr[THREADS_2D + 1];
@@ -149,7 +156,4 @@ void solve2d(const int n, const int dim, double *const coord, // ND layout
   free(maxCombAll);
   free(minValAll);
   free(minCombAll);
-  free(cAll);
-  free(aAll);
-  free(bAll);
 }
