@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
     }
     fprintf(out, "%d\n", minDisSumPivots[i * k + k - 1]);
   }
-  fclose(file);
+  fclose(out);
 
   // Log
   int ki;
