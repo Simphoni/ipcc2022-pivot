@@ -1,98 +1,18 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <omp.h>
 #include "opt2d.h"
 #define uint unsigned long long
 
-static void sort(uint *a, uint *swp, int n) {
-  static int buc0[1 << 8], buc1[1 << 8], buc2[1 << 8], buc3[1 << 8];
-  memset(buc0, 0, sizeof buc0);
-  memset(buc1, 0, sizeof buc0);
-  memset(buc2, 0, sizeof buc0);
-  memset(buc3, 0, sizeof buc0);
-  for (int i = 0; i < n; ++ i) {
-    ++ buc0[a[i]       & 255];
-    ++ buc1[a[i] >>  8 & 255];
-    ++ buc2[a[i] >> 16 & 255];
-    ++ buc3[a[i] >> 24 & 255];
-  }
-  for (int i = 1; i < 256; ++ i) {
-    buc0[i] += buc0[i - 1];
-    buc1[i] += buc1[i - 1];
-    buc2[i] += buc2[i - 1];
-    buc3[i] += buc3[i - 1];
-  }
-  // round 1
-  uint *ptr = a + n - 1;
-  for (int iter = n >> 3; iter; iter --) {
-    swp[-- buc0[ptr[ 0] & 255]] = ptr[ 0];
-    swp[-- buc0[ptr[-1] & 255]] = ptr[-1];
-    swp[-- buc0[ptr[-2] & 255]] = ptr[-2];
-    swp[-- buc0[ptr[-3] & 255]] = ptr[-3];
-    swp[-- buc0[ptr[-4] & 255]] = ptr[-4];
-    swp[-- buc0[ptr[-5] & 255]] = ptr[-5];
-    swp[-- buc0[ptr[-6] & 255]] = ptr[-6];
-    swp[-- buc0[ptr[-7] & 255]] = ptr[-7];
-    ptr -= 8;
-  }
-  while (ptr >= a) {
-    swp[-- buc0[ptr[0] & 255]] = ptr[0];
-    ptr --;
-  }
-  // round 2
-  ptr = swp + n - 1;
-  for (int iter = n >> 3; iter; iter --) {
-    a[-- buc1[ptr[ 0] >> 8 & 255]] = ptr[ 0];
-    a[-- buc1[ptr[-1] >> 8 & 255]] = ptr[-1];
-    a[-- buc1[ptr[-2] >> 8 & 255]] = ptr[-2];
-    a[-- buc1[ptr[-3] >> 8 & 255]] = ptr[-3];
-    a[-- buc1[ptr[-4] >> 8 & 255]] = ptr[-4];
-    a[-- buc1[ptr[-5] >> 8 & 255]] = ptr[-5];
-    a[-- buc1[ptr[-6] >> 8 & 255]] = ptr[-6];
-    a[-- buc1[ptr[-7] >> 8 & 255]] = ptr[-7];
-    ptr -= 8;
-  }
-  while (ptr >= swp) {
-    a[-- buc1[ptr[0] >> 8 & 255]] = ptr[0];
-    ptr --;
-  }
-  // round 3
-  ptr = a + n - 1;
-  for (int iter = n >> 3; iter; iter --) {
-    swp[-- buc2[ptr[ 0] >> 16 & 255]] = ptr[ 0];
-    swp[-- buc2[ptr[-1] >> 16 & 255]] = ptr[-1];
-    swp[-- buc2[ptr[-2] >> 16 & 255]] = ptr[-2];
-    swp[-- buc2[ptr[-3] >> 16 & 255]] = ptr[-3];
-    swp[-- buc2[ptr[-4] >> 16 & 255]] = ptr[-4];
-    swp[-- buc2[ptr[-5] >> 16 & 255]] = ptr[-5];
-    swp[-- buc2[ptr[-6] >> 16 & 255]] = ptr[-6];
-    swp[-- buc2[ptr[-7] >> 16 & 255]] = ptr[-7];
-    ptr -= 8;
-  }
-  while (ptr >= a) {
-    swp[-- buc2[ptr[0] >> 16 & 255]] = ptr[0];
-    ptr --;
-  }
-  // round 4
-  ptr = swp + n - 1;
-  for (int iter = n >> 3; iter; iter --) {
-    a[-- buc3[ptr[ 0] >> 24 & 255]] = ptr[ 0];
-    a[-- buc3[ptr[-1] >> 24 & 255]] = ptr[-1];
-    a[-- buc3[ptr[-2] >> 24 & 255]] = ptr[-2];
-    a[-- buc3[ptr[-3] >> 24 & 255]] = ptr[-3];
-    a[-- buc3[ptr[-4] >> 24 & 255]] = ptr[-4];
-    a[-- buc3[ptr[-5] >> 24 & 255]] = ptr[-5];
-    a[-- buc3[ptr[-6] >> 24 & 255]] = ptr[-6];
-    a[-- buc3[ptr[-7] >> 24 & 255]] = ptr[-7];
-    ptr -= 8;
-  }
-  while (ptr >= swp) {
-    a[-- buc3[ptr[0] >> 24 & 255]] = ptr[0];
-    ptr --;
-  }
+int cmp(const void *a, const void *b) {
+  return (*(double*)a) < (*(double*)b);
 }
 
+#define calc(x,y) pow((x) - (y), 2)
+
 // k = 2
-void solve2d(const int n, const int dim, const int M, double *coord, // ND layout
+void solve2d(const int n, const int dim, double *coord, // ND layout
              double *maxVal, int *maxComb, double *minVal, int *minComb) {
   int totCombs = n * (n - 1) / 2;
   int average = totCombs / THREADS_2D;
@@ -104,7 +24,7 @@ void solve2d(const int n, const int dim, const int M, double *coord, // ND layou
       if (sum >= average * 0.99) {
         assign[tmp] = i;
         tmp ++;
-        fprintf(stderr, "%.3lf\n", 1. * sum / average);
+        /* fprintf(stderr, "%.3lf\n", 1. * sum / average); */
         sum = 0;
       }
       if (tmp == THREADS_2D) break;
@@ -112,9 +32,120 @@ void solve2d(const int n, const int dim, const int M, double *coord, // ND layou
     assign[0] = 0;
     assign[THREADS_2D] = n;
   }
+  // malloc pools for collection
+  double *maxValAll = malloc(sizeof(double) * BUFF * THREADS_2D);
+  int    *maxCombAll = malloc(sizeof(int) * BUFF * THREADS_2D * 2);
+  double *minValAll = malloc(sizeof(double) * BUFF * THREADS_2D);
+  int    *minCombAll = malloc(sizeof(int) * BUFF * THREADS_2D * 2);
+  double *cAll = malloc(sizeof(double) * n * THREADS_2D);
+  double *aAll = malloc(sizeof(double) * n * THREADS_2D);
+  double *bAll = malloc(sizeof(double) * n * THREADS_2D);
 
 #pragma omp parallel num_threads(THREADS_2D) proc_bind(close)
   {
+    const int id = omp_get_thread_num();
+    int lbound = assign[id];
+    int rbound = assign[id + 1];
+
+    double *maxVal = maxValAll + BUFF * id;
+    int    *maxComb = maxCombAll + BUFF * id * 2;
+    double *minVal = minValAll + BUFF * id;
+    int    *minComb = minCombAll + BUFF * id * 2;
+    double *c = cAll + n * id;
+    double *a = aAll + n * id;
+    double *b = bAll + n * id;
     
+    for (int u = lbound; u < rbound; u ++) {
+      printf("[%d]: %d\n", id, u);
+      for (int i = 0; i < n; i ++) {
+        double sum = 0;
+        for (int j = 0; j < dim; j ++)
+          sum += calc(coord[u * 2 + j], coord[i * 2 + j]);
+        c[i] = sqrt(sum);
+      
+        for (int v = u; v < n; v ++) {
+          
+          for (int i = 0; i < n; i ++) {
+            double sum = 0;
+            for (int j = 0; j < dim; j ++)
+              sum += calc(coord[u * 2 + j], coord[i * 2 + j]);
+            sum = sqrt(sum);
+            a[i] = fabs(sum - c[i]) * .5;
+            b[i] = fabs(sum + c[i]) * .5;
+          }
+          qsort(a, n, sizeof(double), cmp);
+          qsort(b, n, sizeof(double), cmp);
+          double ans = 0, asum = 0, bsum = 0;
+          for (int i = 0; i < n; i ++) {
+            ans += a[i] * i - asum;
+            ans += b[i] * i - bsum;
+            asum += a[i]; bsum += b[i];
+          }
+          if (ans > maxVal[0]) {
+            int j = 1;
+            for (int j = 1; j < BUFF; j ++) {
+              if (ans < maxVal[j]) break;
+              else {
+                maxVal[j - 1] = maxVal[j];
+                maxComb[2 * (j - 1)] = maxComb[2 * j];
+                maxComb[2 * (j - 1) + 1] = maxComb[2 * j + 1];
+              }
+            }
+            j --;
+            maxVal[j] = ans;
+            maxComb[2 * j] = u;
+            maxComb[2 * j + 1] = v;
+          }
+          if (ans < minVal[0]) {
+            int j = 1;
+            for (int j = 1; j < BUFF; j ++) {
+              if (ans < minVal[j]) break;
+              else {
+                minVal[j - 1] = minVal[j];
+                minComb[2 * (j - 1)] = minComb[2 * j];
+                minComb[2 * (j - 1) + 1] = minComb[2 * j + 1];
+              }
+            }
+            j --;
+            minVal[j] = ans;
+            minComb[2 * j] = u;
+            minComb[2 * j + 1] = v;
+          }
+        }
+      }
+    }
   }
+  static int ptr[THREADS_2D + 1];
+  
+  for (int i = 0; i < THREADS_2D; i ++) ptr[i] = i * BUFF + BUFF - 1;
+  for (int i = 0; i < BUFF; i ++) {
+    int id = 0;
+    for (int j = 0; j < THREADS_2D; j ++)
+      if (maxValAll[ptr[j]] > maxValAll[ptr[id]]) id = j;
+    int p = ptr[id];
+    ptr[id] --;
+    maxVal[i] = maxValAll[p];
+    maxComb[i * 2] = maxCombAll[p * 2];
+    maxComb[i * 2 + 1] = maxCombAll[p * 2 + 1];
+  }
+
+  for (int i = 0; i < THREADS_2D; i ++) ptr[i] = i * BUFF + BUFF - 1;
+  for (int i = 0; i < BUFF; i ++) {
+    int id = 0;
+    for (int j = 0; j < THREADS_2D; j ++)
+      if (minValAll[ptr[j]] < minValAll[ptr[id]]) id = j;
+    int p = ptr[id];
+    ptr[id] --;
+    minVal[i] = minValAll[p];
+    minComb[i * 2] = minCombAll[p * 2];
+    minComb[i * 2 + 1] = minCombAll[p * 2 + 1];
+  }
+  
+  free(maxValAll);
+  free(maxCombAll);
+  free(minValAll);
+  free(minCombAll);
+  free(cAll);
+  free(aAll);
+  free(bAll);
 }

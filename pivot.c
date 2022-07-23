@@ -213,6 +213,10 @@ int main(int argc, char *argv[])
   temp[0] = -1;
 
   // Main loop. Combine different pivots with recursive function and evaluate them. Complexity : O( n^(k+2) )
+
+  if (k == 2)
+    solve2d(n, dim, coord, // ND layout
+            maxDistanceSum, maxDisSumPivots, minDistanceSum, minDisSumPivots);
   Combination(0, k, n, dim, M, coord, &temp[1], maxDistanceSum, maxDisSumPivots, minDistanceSum, minDisSumPivots);
 
   // End timing
