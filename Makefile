@@ -1,4 +1,4 @@
-CC = gcc
+CC = g++
 CFLAGS=-lm -Ofast -fopenmp
 
 all: pivot

@@ -33,15 +33,16 @@ void solve2d(const int n, const int dim, double *coord, // ND layout
     assign[THREADS_2D] = n;
   }
   // malloc pools for collection
-  double *maxValAll = malloc(sizeof(double) * BUFF * THREADS_2D);
-  int    *maxCombAll = malloc(sizeof(int) * BUFF * THREADS_2D * 2);
-  double *minValAll = malloc(sizeof(double) * BUFF * THREADS_2D);
-  int    *minCombAll = malloc(sizeof(int) * BUFF * THREADS_2D * 2);
-  double *cAll = malloc(sizeof(double) * n * THREADS_2D);
-  double *aAll = malloc(sizeof(double) * n * THREADS_2D);
-  double *bAll = malloc(sizeof(double) * n * THREADS_2D);
+  double *maxValAll = (double*)malloc(sizeof(double) * BUFF * THREADS_2D);
+  int    *maxCombAll = (int*)malloc(sizeof(int) * BUFF * THREADS_2D * 2);
+  double *minValAll = (double*)malloc(sizeof(double) * BUFF * THREADS_2D);
+  int    *minCombAll = (int*)malloc(sizeof(int) * BUFF * THREADS_2D * 2);
+  double *cAll = (double*)malloc(sizeof(double) * n * THREADS_2D);
+  double *aAll = (double*)malloc(sizeof(double) * n * THREADS_2D);
+  double *bAll = (double*)malloc(sizeof(double) * n * THREADS_2D);
 
-#pragma omp parallel num_threads(THREADS_2D) proc_bind(close)
+#pragma omp parallel num_threads(THREADS_2D)
+#pragma omp proc_bind(close)
   {
     const int id = omp_get_thread_num();
     int lbound = assign[id];
@@ -68,7 +69,7 @@ void solve2d(const int n, const int dim, double *coord, // ND layout
           for (int i = 0; i < n; i ++) {
             double sum = 0;
             for (int j = 0; j < dim; j ++)
-              sum += calc(coord[u * 2 + j], coord[i * 2 + j]);
+              sum += calc(coord[v * 2 + j], coord[i * 2 + j]);
             sum = sqrt(sum);
             a[i] = fabs(sum - c[i]) * .5;
             b[i] = fabs(sum + c[i]) * .5;
