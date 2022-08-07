@@ -1,0 +1,71 @@
+-------------------------------------------------------------- /public1/soft/modulefiles --------------------------------------------------------------
+6.2.1                                                  gromacs/2022.2-oneAPI.2022.1           mpich/3.2a2-gcc7.3-fgl           wps/3.9.1         
+airss/0.9.1-gnu                                        gsl/2.0                                mpich/3.4.2                      wps/4.0           
+ananconda/2-Python-2.7.16                              gsl/2.5-heke                           namd/intel17/2.12-zyq            wps/4.0-ips17     
+ananconda/2-Python-uspex                               gsl/2.6-wxl                            ncl/6.6.2-nodap                  wps/4.2           
+ananconda/3-Python-3.6.5                               gtk+/2.24.32                           nco/intel17-zhangjr              wrf/3.9.1         
+ananconda/3-Python-3.8.3-phonopy-phono3py              hdf5/1.8.13-icc17                      ncview/2.1.7                     wrf/4.0           
+ananconda/3-Python3.7.3-wjl                            hdf5/1.8.13-icc17-new                  netcdf-fortran/4.4.5             wrf/4.0-ips17     
+aocc/3.2.0                                             hdf5/1.8.13-intel20                    netcdf/4.4.1-icc17               wrf/4.2           
+aocl/3.2.0                                             hdf5/1.8.13-parallel-icc18             netcdf/4.4.1-zw                  wrfda/3.9         
+autodock/4.2.6-cjj                                     hdf5/1.10.4-cxx                        netcdf/4.6.3-intel20             wxl/0.1-wxl       
+aviso-fes/2.9.3-ips17                                  hdf5/1.10.4-intel20                    netcdf/4.7.0-icc17               xorriso/1.5.4     
+bbmap/38.96                                            hdf5/1.10.4-parallel-icc18             netcdf/4.7.1-ips17-fortran4.5.2  zlib/1.2.7        
+blas/3.8.0                                             hdf5/1.10.4-parallel-intel17           octave/5.2.0                     zlib/1.2.7-icc17  
+blast+/2.13.0                                          hdf5/1.10.5-ips17                      oneAPI/2022.1                    zlib/1.2.9        
+boost/155-intel17                                      hmmer/3.3.2                            openmolcas/intel17-zjr           
+boost/163-gcc10.2                                      intel/17.0.5                           openmpi/1.3.3-gcc                
+boost/163-intel18                                      intel/18.0.4                           openmpi/1.3.3-new                
+boost/176-gcc10.2                                      intel/19.3.0                           openmpi/3.1.4-intel              
+cdo/1.9.5                                              intel/20.0.1                           openmpi/3.1.4-orca               
+cdo/1.9.10                                             intel/20.4.3                           openmpi/3.1.6-gcc                
+cdo/1.9.10-ips17                                       intel/2021.1                           openmpi/3.1.6-intel              
+cmake/3.17.0                                           intel/2021.2                           OpenSees/2.5.0-stable            
+cmake/3.23.1                                           intel/2022.1                           OpenSees/3.3                     
+cp2k/7.1-gcc-plumed                                    jasper/1.9                             OPERA-MS/0.9.0                   
+cp2k/8.1-intel20-plumed-jl                             jasper/1.900.1-icc17                   orca/5.0.1-shared-openmpi-4.1.1  
+cp2k/8.1-oneAPI.2022.1-regtest                         java/1.8.0_221                         p7zip/9.20.1                     
+cp2k/8.2-gcc7.3.0-openmpi4.1.1                         lammps/20Sep2021                       p7zip/16.02                      
+cp2k/8.2-intel20-plumed-jl                             lammps/intel17/2Jun2020                paraview/5.6.2                   
+cp2k/9.1-oneAPI.2022.1-plumed                          lammps/intel17/3Mar20                  pcre/8.42                        
+cp2k/intel17/5.1-zyq                                   lammps/intel17/11Aug2017-ips17         perl/5.30.1                      
+cp2k/intel17/6.1-libxc-libint-zyq                      lammps/intel17/22Aug18-voronoi         petsc/3.11.4-intel18-hdf5-ls     
+cp2k/intel17/7.1-intel20                               lammps/intel17/27May2021-basic-avx256  plumed/2.5.4-intel17-cjj         
+cp2k/intel17/8.1-intel17-jl                            lammps/intel17/lammps-12Dec18-meam     plumed/2.6.2-intel20-jl          
+cp2k/intel17/8.1-intel20-lcc                           lammps/intel17/lammps-29Oct20-CLASS2   pnetcdf/1.11.1                   
+cp2k/intel20/8.1-libinit-libxc-elpa-libxsmm-icc20-fjy  lammps/intel17/lammps-29Oct20-voronoi  pnetcdf/1.12.1                   
+dealii/9.3.3-ips18-trilinos-petsc-p4est                lammps/intel17/stable_22Aug2018        pnetcdf/1.12.1-ips17             
+ElATools/1.7.3-ips17                                   lammps/intel18/lammps-7Aug19           Prodigal/2.6.3                   
+elpa/2016.05.004                                       lammps/oneAPI.2022.1/29Oct2020-no_lib  proj/6.1.0                       
+elpa/2018.11.001                                       lapack/3.7.0-kd                        python/3.9.6                     
+elpa/2019.11.001                                       libgd/2.1.1                            qe/6.4.1-lcc                     
+elpa/2019.11.001-new                                   libint/1.1.5-icc17-zyq                 qe/6.5-lcc                       
+FFmpeg/n3.0-oneAPI.2022.1                              libint/2.6.0-a-zyq                     qe/6.6-ips17                     
+fftw/3.3.8-intel                                       libint/2.6.0-cp2k-lmax-4-jl-intel20    qe/6.7                           
+fftw/3.3.8-intel-double                                libpng/1.6.37                          qe/6.7.0-oneAPI.2022.1           
+fftw/3.3.9                                             libxc/4.0.5-icc17-zyq                  qe/6.8                           
+fftw/aocl                                              libxc/4.3.4-a-zyq                      qe/7.0.0-oneAPI.2022.1           
+gcc/4.9.2                                              libxc/4.3.4-icc18                      qt/4.8.7                         
+gcc/7.3.0-wzm                                          libxc/5.1.5                            R/3.6.1                          
+gcc/7.4.0                                              libxc/5.1.5-jl-intel20                 R/3.6.3                          
+gcc/8.1.0                                              libxml2/2.9.6-thc                      R/4.0.3                          
+gcc/8.3.0                                              libxsmm/1.15-icc17-jl                  R/4.0.5                          
+gcc/10.2.0                                             llvm/3.9.1                             R/4.1.0                          
+gcc/medea                                              mesa/13.0.6                            R/4.1.2-ips17                    
+gdal/3.2.1                                             metabat/2.12.1                         R/4.2.0                          
+gl2ps/1.4.2                                            mpi/intel/17.0.5                       rar/5.3.0-luym                   
+glibc/2.30                                             mpi/intel/18.2                         samtools/1.15                    
+gnuplot/5.2.8                                          mpi/intel/19.3.0                       script/wxl                       
+grace/5.1.25-ips17                                     mpi/intel/20.0.1                       ShengBTE/1.1.1                   
+grib_api/1.28.0                                        mpi/intel/20.4.3                       singularity/3.5.3                
+gromacs/4.6.3                                          mpi/intel/2017.5                       spglib/master                    
+gromacs/5.1.5                                          mpi/intel/2018.4                       SU2/v7.1.1                       
+gromacs/2018.1                                         mpi/intel/2021.1                       szip/2.1.1                       
+gromacs/2019                                           mpi/intel/2021.2                       thirdorder/1.1.1                 
+gromacs/2019.3                                         mpi/intel/2022.1                       tree/1.8.0                       
+gromacs/2019.4                                         mpi/oneAPI/2022.1                      udunits/2.2.26                   
+gromacs/2019.5                                         mpi/openmpi/4.1.1-gcc7.3.0             uProf/3.5.671                    
+gromacs/2019.6-plumed-ips17                            mpi/openmpi/4.1.1-intel-17             vmd/1.9.2                        
+gromacs/2020.1                                         mpich/3.1.4-gcc4.9.2                   vtk/8.2.0-kd                     
+gromacs/2021.3-avx256-intel-20.4.3                     mpich/3.1.4-gcc8.1.0                   wannier90/intel17/2.1.0          
+gromacs/2021.5-fephrex                                 mpich/3.1.4-intel-17.0.5               wannier_tools/intel17-lmy        
