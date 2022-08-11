@@ -4,6 +4,7 @@
 #include "solver.h"
 
 // dim : dimension of metric space
+// k : dimension of rebuilt coord
 int n, k, dim;
 
 int main(int argc, char* argv[]) {
@@ -16,9 +17,7 @@ int main(int argc, char* argv[]) {
         printf("Usage: ./pivot <filename>\n");
         return -1;
     }
-    // M : number of combinations to store
-
-    // Read parameter
+    // Read parameters
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
         printf("%s file not found.\n", filename);
@@ -101,8 +100,6 @@ int main(int argc, char* argv[]) {
         }
         printf("%lf\n", minVal[0]);
     }
-
-
 
     MPI_Finalize();
 

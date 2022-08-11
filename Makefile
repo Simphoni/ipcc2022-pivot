@@ -1,6 +1,6 @@
-CC = mpicc
+CC = mpicxx
 CFLAGS = -Ofast -O3 -fopenmp -mavx2 -mavx -march=native -lm -lstdc++
-SRC := main.cpp opt4d.cpp opt2d.cpp commun.cpp
+SRC := main.cpp opt5d.cpp opt2d.cpp commun.cpp
 
 all: main
 

@@ -1,7 +1,6 @@
 #ifndef PIVOT_SOLVER_H
 #define PIVOT_SOLVER_H
 
-#define int64_t unsigned long long
 #define BUFF 1000
 
 void pivot_solver_2d(int n, int dim, double* coord, // ND layout
