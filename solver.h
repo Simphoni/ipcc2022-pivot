@@ -6,7 +6,7 @@
 void pivot_solver_2d(int n, int dim, double* coord, // ND layout
     double* maxVal, int* maxComb, double* minVal, int* minComb, int nprocs, int rank);
 
-void pivot_solver_4d(int n, int dim, double* coord, // ND layout
+void pivot_solver_common(int n, int dim, double* coord, // ND layout
     double* maxVal, int* maxComb, double* minVal, int* minComb, int nprocs, int rank);
 
 void merge(double* maxValAll, int* maxCombAll, double* minvalAll, int* minCombAll,

@@ -26,3 +26,7 @@ solve2d(n, dim, coord, maxDistanceSum, maxDisSumPivots, minDistanceSum, minDisSu
 文件：opt2d.c solver.h commun.cpp
 运行：n=500,k=2：86 ms
 使用双机，各自启动42线程
+
+时间：0812 0031
+文件：opt5d.c
+运行：n=100,k=5: 3080 ms

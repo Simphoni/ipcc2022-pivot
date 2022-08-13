@@ -53,11 +53,12 @@ int main(int argc, char* argv[]) {
 
     if (k == 2) pivot_solver_2d(n, dim, coord,
         maxVal, maxComb, minVal, minComb, nprocs, rank);
-    else pivot_solver_4d(n, dim, coord,
+    else pivot_solver_common(n, dim, coord,
         maxVal, maxComb, minVal, minComb, nprocs, rank);
 
     commun(k, maxVal, maxComb, minVal, minComb, nprocs, rank);
     // end compute zone
+    //for (int i = 0; i < 10; i ++) printf("%.10lf\n", maxVal[i]);
 
     MPI_Barrier(MPI_COMM_WORLD);
 

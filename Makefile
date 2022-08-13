@@ -10,7 +10,9 @@ clean:
 	rm main
 perf2:
 	srun -pIPCC -t 1 -N 2 -n 2 numactl -N 0,1 --membind=0,1 ./main
-	diff -sb result.txt refer-2dim-5h.txt
 perf4:
-	srun -pIPCC -t 1 -N 2 -n 2 numactl -N 0,1 --membind=0,1 ./main uniformvector-4dim-1h.txt
+	env OMP_PROC_BIND=close env OMP_PLACES=cores srun -pIPCC -t 1 -N 2 -n 2 ./main uniformvector-4dim-1h.txt
+check2:
+	diff -sb result.txt refer-2dim-5h.txt
+check4:
 	diff -sb result.txt refer-4dim-1h.txt

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#define THREADS_2D 42
+#define THREADS_2D 64
 
 int cmp(const void* a, const void* b) {
 	return (*(double*)a) - (*(double*)b) < 0 ? -1 : 1;
